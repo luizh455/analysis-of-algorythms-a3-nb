@@ -45,8 +45,10 @@ public class Exemplo2 {
                     listaAdj.add(vertice);
                 }
 
+                // cria uma adjacencia da palavra atual com todas as outras palavras da frase
                 for (int j = 0; j < frase.listaPalavras.size(); j++) {
                     if(j == i) {
+                        // ignora a propria palavra
                         continue;
                     }
                     String palavra2 = frase.listaPalavras.get(j);
