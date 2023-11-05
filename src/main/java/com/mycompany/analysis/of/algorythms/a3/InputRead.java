@@ -6,9 +6,12 @@ package com.mycompany.analysis.of.algorythms.a3;
  */
 
 /**
- *
  * @author lhenr
  */
+
+import com.mycompany.analysis.of.algorythms.a3.sdk.Artigo;
+import com.mycompany.analysis.of.algorythms.a3.sdk.Frase;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -61,6 +64,7 @@ public class InputRead {
             resumePath = new File("/Users/llage/dev/GitHub/una/analysis-of-algorithms-a3/resumos");
         }
     }
+
     public static void setupPathNetBeans() {
         print(resumePath.toString());
         if (resumePath.list() == null) {
@@ -76,11 +80,11 @@ public class InputRead {
     public static void main(String[] args) throws IOException {
         run();
     }
-    
+
     public static List<Artigo> run() {
         List<Artigo> artigos = new ArrayList<>();
         List<Artigo> artigosNormalizados = new ArrayList<>();
-        
+
         //setupPathVSCode(); // Configura caminho para o repositorio para ler os arquivos .txt
         setupPathNetBeans();
 
@@ -104,9 +108,9 @@ public class InputRead {
         }
 
         for (Artigo artigo : artigosNormalizados) {
-            artigo.frasesFiltradas = filtrarStopWords(artigo).frasesFiltradas;
-        }  
-        
+            artigo.setFrasesFiltradas(filtrarStopWords(artigo).getFrasesFiltradas());
+        }
+
         return artigosNormalizados;
     }
 
@@ -138,24 +142,24 @@ public class InputRead {
     public static Artigo normalizeArtigo(Artigo artigo) {
 
         Artigo artigoAux = artigo;
-        artigoAux.resumo = artigoAux.resumo.toLowerCase();
-        artigoAux.resumo = Normalizer.normalize(artigoAux.resumo, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""); // faz o replace de todos caracteres especiais como acentos
-        artigoAux.resumo = artigoAux.resumo.replaceAll("[^\\w\\s.]", ""); // remove todas as pontuações
+        artigoAux.setResumo(artigoAux.getResumo().toLowerCase());
+        artigoAux.setResumo(Normalizer.normalize(artigoAux.getResumo(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "")); // faz o replace de todos caracteres especiais como acentos
+        artigoAux.setResumo(artigoAux.getResumo().replaceAll("[^\\w\\s.]", "")); // remove todas as pontuações
 
         //imprime frases todas as frases
         //print(artigo.frases);
 
-        return new Artigo(artigo.titulo, artigo.resumo, artigo.tags);
+        return new Artigo(artigo.getTitulo(), artigo.getResumo(), artigo.getTags());
     }
 
     public static Artigo filtrarStopWords(Artigo artigo) {
         List<Frase> frasesResult = new ArrayList<>();
 
-        for (String frase : artigo.frases) {
+        for (String frase : artigo.getFrases()) {
             Frase fraseFiltrada = FiltrarFrase(frase);
             frasesResult.add(fraseFiltrada);
         }
-        artigo.frasesFiltradas = frasesResult;
+        artigo.setFrasesFiltradas(frasesResult);
 
         // // DEBUG comparando frase original com a frase filtrada;;
         // print("================");
@@ -173,7 +177,7 @@ public class InputRead {
         List<String> resultList = new ArrayList<>();
         String[] frase = fraseInteira.split(" ");
         for (String palavra : frase) {
-            if(!dicionarioStopWords.contains(palavra)) {
+            if (!dicionarioStopWords.contains(palavra) && !palavra.isEmpty()) {
                 resultList.add(palavra);
             }
         }
@@ -182,28 +186,28 @@ public class InputRead {
 
     // Metodos print para facilitar a vida...
     public static void print(String[] msg) {
-        for(String value: msg) {
+        for (String value : msg) {
             print(value);
         }
     }
 
     public static void print(List<String> msg) {
-        if(msg == null) return;
+        if (msg == null) return;
         msg.forEach((v) -> print(v));
     }
 
     public static void printFrase(List<Frase> a) {
-        if(a == null) return;
+        if (a == null) return;
         a.forEach((v) -> print(v));
     }
 
     public static void printAsText(Frase frase) {
-        frase.listaPalavras.forEach((v) -> System.out.print(v + " "));
+        frase.getListaPalavras().forEach((v) -> System.out.print(v + " "));
     }
 
     public static void print(Frase msg) {
-        if(msg == null) return;
-        print(msg.listaPalavras);
+        if (msg == null) return;
+        print(msg.getListaPalavras());
     }
 
     public static void print(String msg) {

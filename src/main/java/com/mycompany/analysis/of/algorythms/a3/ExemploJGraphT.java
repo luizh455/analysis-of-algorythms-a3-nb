@@ -8,6 +8,8 @@ package com.mycompany.analysis.of.algorythms.a3;
  *
  * @author lhenr
  */
+import com.mycompany.analysis.of.algorythms.a3.sdk.Artigo;
+import com.mycompany.analysis.of.algorythms.a3.sdk.Frase;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
@@ -28,11 +30,11 @@ public class ExemploJGraphT {
         Graph<String, DefaultEdge> grafo = new SimpleGraph<>(DefaultEdge.class);
         
         for ( Artigo artigo : artigos) {
-           for (Frase frases : artigo.frasesFiltradas) {
+           for (Frase frases : artigo.getFrasesFiltradas()) {
                
            }
         }
-        for(String palavra : artigos.get(0).frasesFiltradas.get(0).listaPalavras) {
+        for(String palavra : artigos.get(0).getFrasesFiltradas().get(0).getListaPalavras()) {
             grafo.addVertex(palavra);
         }
         
@@ -83,12 +85,12 @@ public class ExemploJGraphT {
     }
 
     public static void printAsText(Frase frase) {
-        frase.listaPalavras.forEach((v) -> System.out.print(v + " "));
+        frase.getListaPalavras().forEach((v) -> System.out.print(v + " "));
     }
 
     public static void print(Frase msg) {
         if(msg == null) return;
-        print(msg.listaPalavras);
+        print(msg.getListaPalavras());
     }
 
     public static void print(String msg) {

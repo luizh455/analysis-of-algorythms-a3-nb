@@ -3,6 +3,8 @@
  */
 
 package com.mycompany.analysis.of.algorythms.a3;
+import com.mycompany.analysis.of.algorythms.a3.sdk.Artigo;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
