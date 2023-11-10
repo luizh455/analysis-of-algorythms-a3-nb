@@ -22,27 +22,6 @@ import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-//;
-//public class Frase {
-//    List<String> listaPalavras;
-//    Frase(List<String> listaPalavras) {
-//        this.listaPalavras = listaPalavras;
-//    }
-//}
-//public class Artigo {
-//    String titulo;
-//    String resumo;
-//    String tags;
-//    String[] frases;
-//    List<Frase> frasesFiltradas;
-//
-//    public Artigo(String titulo, String resumo, String tags) {
-//        this.titulo = titulo;
-//        this.resumo = resumo;
-//        this.tags = tags;
-//        this.frases = resumo.split("[\\.]");
-//    }
-//}
 
 public class InputRead {
 
@@ -53,17 +32,6 @@ public class InputRead {
 
     // Dicionario de stopwords
     static List<String> dicionarioStopWords = new ArrayList<>(Arrays.asList("a", "as", "da", "das", "o", "os", "do", "dos", "e", "em", "de", "no", "nos", "na", "nas", "ante", "apos", "ate", "com", "contra", "desde", "entre", "para", "por", "perante", "sob", "sobre", "deste", "destes", "este", "estes", "esta", "estas", "desta", "destas", "esse", "essa", "isto", "isso", "se", "sendo", "tambem", "que"));
-
-    //caso o programa não pegue o path correto automaticamente (é para funcionar no windows), insira os paths nas variaveis a baixo
-    public static void setupPathVSCode() {
-        print(resumePath.toString());
-        if (resumePath.list() == null) {
-            //path do repositorio
-            absPath = new File("/Users/llage/dev/GitHub/una/analysis-of-algorithms-a3");
-            //path dos resumos
-            resumePath = new File("/Users/llage/dev/GitHub/una/analysis-of-algorithms-a3/resumos");
-        }
-    }
 
     public static void setupPathNetBeans() {
         print(resumePath.toString());
@@ -85,7 +53,6 @@ public class InputRead {
         List<Artigo> artigos = new ArrayList<>();
         List<Artigo> artigosNormalizados = new ArrayList<>();
 
-        //setupPathVSCode(); // Configura caminho para o repositorio para ler os arquivos .txt
         setupPathNetBeans();
 
         for (String file : listFiles()) {
@@ -130,10 +97,6 @@ public class InputRead {
         Path path = Paths.get(fileName);
         List<String> allLines = Files.readAllLines(path, charset);
 
-        //imprime todos as linhas dos textos
-        //print(allLines);
-
-        //linha(0) == titulo // linha(1) == resumo // linha(2) == tags 
         Artigo artigo = new Artigo(allLines.get(0), allLines.get(1), allLines.get(2));
 
         return artigo;
@@ -146,9 +109,6 @@ public class InputRead {
         artigoAux.setResumo(Normalizer.normalize(artigoAux.getResumo(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "")); // faz o replace de todos caracteres especiais como acentos
         artigoAux.setResumo(artigoAux.getResumo().replaceAll("[^\\w\\s.]", "")); // remove todas as pontuações
 
-        //imprime frases todas as frases
-        //print(artigo.frases);
-
         return new Artigo(artigo.getTitulo(), artigo.getResumo(), artigo.getTags());
     }
 
@@ -160,15 +120,6 @@ public class InputRead {
             frasesResult.add(fraseFiltrada);
         }
         artigo.setFrasesFiltradas(frasesResult);
-
-        // // DEBUG comparando frase original com a frase filtrada;;
-        // print("================");
-        // print(artigo.frases);
-        // print("================");
-        // for (Frase frase: frasesResult) {
-        //     printAsText(frase);
-        // }
-        // print("================");
 
         return artigo;
     }
@@ -184,7 +135,6 @@ public class InputRead {
         return new Frase(resultList);
     }
 
-    // Metodos print para facilitar a vida...
     public static void print(String[] msg) {
         for (String value : msg) {
             print(value);

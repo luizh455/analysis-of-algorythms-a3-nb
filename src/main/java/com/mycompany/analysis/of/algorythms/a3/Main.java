@@ -6,16 +6,23 @@ package com.mycompany.analysis.of.algorythms.a3;
 
 import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.util.mxConstants;
+import com.mxgraph.util.mxRectangle;
+import com.mxgraph.view.mxGraphView;
 import com.mycompany.analysis.of.algorythms.a3.sdk.*;
 import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.DefaultEdge;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+
+import static java.awt.event.KeyEvent.KEY_RELEASED;
 
 
 public class Main {
@@ -29,52 +36,14 @@ public class Main {
         int index = scanner.nextInt();
 
         Artigo artigo = artigos.get(index);
-        if(artigo == null) {
+        if (artigo == null) {
             throw new RuntimeException("Artigo com índice " + index + "não encontrado.");
         }
 
         List<Vertice> listaAdj = construirListaDeAdjacencia(artigo);
-        MyGraph<String, DefaultEdge> grafo = criarGrafo(listaAdj);
 
-        JGraphXAdapter<String, DefaultEdge> jgxAdapter = new JGraphXAdapter<>(grafo);
-
-        mxCircleLayout layout = new mxCircleLayout(jgxAdapter);
-        layout.execute(jgxAdapter.getDefaultParent());
-
-        mxGraphComponent graphComponent = new mxGraphComponent(jgxAdapter);
-        graphComponent.setConnectable(false);
-        graphComponent.setAntiAlias(false);
-        graphComponent.getGraph().setAllowDanglingEdges(false);
-        graphComponent.getGraph().setCellsDisconnectable(false);
-        graphComponent.getGraph().setCellsEditable(false);
-        graphComponent.getGraph().setConnectableEdges(false);
-
-        JFrame frame = new JFrame("Grafo de resumos");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().add(graphComponent);
-        frame.setPreferredSize(new Dimension(800, 600));
-        frame.pack();
-        frame.setVisible(true);
-    }
-
-    private static MyGraph<String, DefaultEdge> criarGrafo(List<Vertice> listaAdj) {
-        MyGraph<String, DefaultEdge> grafo = new MyGraph<>(DefaultEdge.class);
-        // Adiciona todos os vertices ao
-        for (Vertice vertice : listaAdj) {
-            grafo.addVertex(vertice.getPalavra());
-        }
-
-        // Cria as arestas com respectivos pesos
-        for (Vertice vertice : listaAdj) {
-            for (Map.Entry<String, Integer> entry : vertice.getAdjacentes().entrySet()) {
-                String palavraAdj = entry.getKey();
-                if (!grafo.containsEdge(vertice.getPalavra(), palavraAdj)) {
-                    WeightedEdge e = new WeightedEdge(entry.getValue().toString());
-                    grafo.addEdge(vertice.getPalavra(), palavraAdj, e);
-                }
-            }
-        }
-        return grafo;
+        GraphViewer graphViewer = new GraphViewer(listaAdj);
+        graphViewer.execute();
     }
 
     private static List<Vertice> construirListaDeAdjacencia(Artigo artigo) {
