@@ -17,10 +17,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
 
 import static java.awt.event.KeyEvent.KEY_RELEASED;
 
@@ -40,43 +38,51 @@ public class Main {
             throw new RuntimeException("Artigo com índice " + index + "não encontrado.");
         }
 
-        List<Vertice> listaAdj = construirListaDeAdjacencia(artigo);
+        List<Aresta> listaDeAdjacencia = criarListaDeAdjacencias(artigo);
 
-        GraphViewer graphViewer = new GraphViewer(listaAdj);
+        GraphViewer graphViewer = new GraphViewer(listaDeAdjacencia);
         graphViewer.execute();
     }
 
-    private static List<Vertice> construirListaDeAdjacencia(Artigo artigo) {
-        List<Vertice> listaAdj = new ArrayList<>();
+    private static List<Aresta> criarListaDeAdjacencias(Artigo artigo) {
+        Map<String, Vertice> vertices = new HashMap<>();
+        Map<Integer, Aresta> arestasPorHashCode = new HashMap<>();
+
         for (Frase frase : artigo.getFrasesFiltradas()) {
+            if(frase.getListaPalavras().isEmpty() || frase.getListaPalavras().size() == 1) continue;
+
             for (int i = 0; i < frase.getListaPalavras().size(); i++) {
                 String palavra1 = frase.getListaPalavras().get(i);
-                Vertice vertice = null;
-
-                for (Vertice v : listaAdj) {
-                    if (v.getPalavra().equals(palavra1)) {
-                        vertice = v;
-                    }
-                }
-                if (vertice == null) {
-                    vertice = new Vertice(palavra1);
-                    listaAdj.add(vertice);
+                Vertice vertice1 = vertices.get(palavra1);
+                if(vertice1 == null) {
+                    vertice1 = new Vertice(palavra1, 1);
+                    vertices.put(palavra1, vertice1);
+                } else {
+                    vertice1.setOcorrencias(vertice1.getOcorrencias() + 1);
                 }
 
-                // cria uma adjacencia da palavra atual com todas as outras palavras da frase
-                for (int j = 0; j < frase.getListaPalavras().size(); j++) {
-                    if (j == i) {
-                        // ignora a propria palavra
-                        continue;
-                    }
+                for (int j = i + 1; j < frase.getListaPalavras().size(); j++) {
                     String palavra2 = frase.getListaPalavras().get(j);
 
-                    if (!palavra1.equals(palavra2)) {
-                        vertice.addAdjacente(palavra2);
+                    if(palavra2.equals(palavra1)) continue;
+
+                    Vertice vertice2 = vertices.get(palavra2);
+                    if(vertice2 == null) {
+                        vertice2 = new Vertice(palavra2, 0);
+                        vertices.put(palavra2, vertice2);
+                    }
+
+                    Aresta novaAresta = new Aresta(vertice1, vertice2, 1);
+                    Aresta arestaExistente = arestasPorHashCode.get(novaAresta.hashCode());
+                    if(arestaExistente == null) {
+                        arestasPorHashCode.put(novaAresta.hashCode(), novaAresta);
+                    } else {
+                        arestaExistente.setPeso(arestaExistente.getPeso() + 1);
                     }
                 }
             }
         }
-        return listaAdj;
+
+        return new ArrayList<>(arestasPorHashCode.values());
     }
 }

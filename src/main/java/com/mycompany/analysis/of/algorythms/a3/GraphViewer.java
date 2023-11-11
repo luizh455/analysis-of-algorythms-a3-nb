@@ -4,6 +4,7 @@ import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.view.mxGraphView;
+import com.mycompany.analysis.of.algorythms.a3.sdk.Aresta;
 import com.mycompany.analysis.of.algorythms.a3.sdk.SimpleGraph;
 import com.mycompany.analysis.of.algorythms.a3.sdk.Vertice;
 import com.mycompany.analysis.of.algorythms.a3.sdk.WeightedEdge;
@@ -13,15 +14,14 @@ import org.jgrapht.graph.DefaultEdge;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
-import java.util.Map;
 
 import static java.awt.event.KeyEvent.KEY_RELEASED;
 
 public class GraphViewer {
 
-    private final List<Vertice> listaAdj;
+    private final List<Aresta> listaAdj;
 
-    public GraphViewer(List<Vertice> listaAdj) {
+    public GraphViewer(List<Aresta> listaAdj) {
         this.listaAdj = listaAdj;
     }
 
@@ -63,33 +63,34 @@ public class GraphViewer {
         manager.addKeyEventDispatcher(e -> {
             if (e.getID() == KEY_RELEASED) {
                 if (e.getKeyChar() == '+') {
-                    double newScale = (double)((int)(graphComponent.getGraph().getView().getScale() * 100.0 * 1.8)) / 100.0;
-                    graphComponent.zoomTo(newScale, true);
+                    double newScale = (double)((int)(graphComponent.getGraph().getView().getScale() * 100.0 * 1.5)) / 100.0;
+                    graphComponent.zoomTo(newScale, false);
                 }
                 if (e.getKeyChar() == '-') {
                     double newScale = (double)((int)(graphComponent.getGraph().getView().getScale() * 100.0 * 0.8)) / 100.0;
-                    graphComponent.zoomTo(newScale, true);
+                    graphComponent.zoomTo(newScale, false);
                 }
             }
             return false;
         });
     }
 
-    private static SimpleGraph<String, DefaultEdge> criarGrafo(List<Vertice> listaAdj) {
+    private static SimpleGraph<String, DefaultEdge> criarGrafo(List<Aresta> listaAdj) {
         SimpleGraph<String, DefaultEdge> grafo = new SimpleGraph<>(DefaultEdge.class);
-        // Adiciona todos os vertices ao
-        for (Vertice vertice : listaAdj) {
-            grafo.addVertex(vertice.getPalavra());
-        }
 
-        // Cria as arestas com respectivos pesos
-        for (Vertice vertice : listaAdj) {
-            for (Map.Entry<String, Integer> entry : vertice.getAdjacentes().entrySet()) {
-                String palavraAdj = entry.getKey();
-                if (!grafo.containsEdge(vertice.getPalavra(), palavraAdj)) {
-                    WeightedEdge e = new WeightedEdge(entry.getValue().toString());
-                    grafo.addEdge(vertice.getPalavra(), palavraAdj, e);
-                }
+        for (Aresta aresta : listaAdj) {
+            Vertice vertice1 = aresta.getVertice1();
+            Vertice vertice2 = aresta.getVertice2();
+            if(!grafo.containsVertex(vertice1.getPalavra())) {
+                grafo.addVertex(vertice1.getPalavra());
+            }
+            if(!grafo.containsVertex(vertice2.getPalavra())) {
+                grafo.addVertex(vertice2.getPalavra());
+            }
+
+            if (!grafo.containsEdge(vertice1.getPalavra(), vertice2.getPalavra())) {
+                WeightedEdge e = new WeightedEdge(String.valueOf(aresta.getPeso()));
+                grafo.addEdge(vertice1.getPalavra(), vertice2.getPalavra(), e);
             }
         }
         return grafo;
